@@ -11,24 +11,24 @@ def main(argv):
 
     if len(argv) > 4:
         try:
-            URL, search, child, class_or_id, _id = argv[1].strip(), argv[2].strip(), argv[3].strip(), argv[4].string() == True, argv[5].strip() == True
-            print(f'URL: {URL}\n search string: {search}\n child: {child}' )  
+            URL, search, search_text, class_, id_ = argv[1].strip(), argv[2].strip(), argv[3].strip(), argv[4].strip() == True, argv[5].strip() == True
 
         except ValueError:
             print( 'issues parsing command line inputs.\n' )
+            
     elif len(argv) == 3:
+    
         try:
             URL, search = argv[1].strip(),argv[2].strip()
         except ValueError:
             print( 'issues parsing command line inputs.\n' )
 
-        class_or_id, _id, child = False, False, 'div'
+        class_, id_, search_text = False, False, search
     else: 
-        print(f'I got the following arguments:\n {argv}')
-        print('wrong number of arguments provided. Using defaults.')
+        print(f'\n\nThe following arguments were provided:\n {argv}')
         print('''please provide one of the following combinations of arguments:
         short search: {URL} {html tag search term - usually "body"}
-        deep search: {URL} {html tag search term - usually body or div} {child - item inside of first search tag term} {class_: True or False} {id: True or False}
+        deep search: {URL} {html tag search term - usually body or div} {search_text - item inside of first search tag term} {class_: True or False} {id: True or False}
         ''')
 
         return
@@ -37,11 +37,11 @@ def main(argv):
         '''
         URL = 'https://www.crummy.com/software/BeautifulSoup/bs4/doc/'
         search = 'div'
-        class_or_id = True
-        _id = True
-        child = 'installing-beautiful-soup'''
+        class_ = True
+        id_ = True
+        search_text = 'installing-beautiful-soup'''
 
-    print(f'URL: {URL}\nsearch: {search}\nclass_or_id: {class_or_id}\n_id:{_id}\nchild:{child}')
+    print(f'URL: {URL}\nsearch: {search}\nclass_: {class_}\nid_:{id_}\nsearch_text:{search_text}')
 
 
     #Let's do a little web scraping. returns a urllib3.response.HTTPResponse object.
@@ -55,20 +55,21 @@ def main(argv):
     soup = BeautifulSoup(r.text, 'html.parser')
 
     #find the content you're looking for:
-    if class_ or id:
+    if class_ or id_ :
 
-        if _id:
-            entries = soup.find_all( id = child )
+        if id_:
+            entries = soup.find_all( id = search_text )
 
         else:
-            entries = soup.find_all( class_ = child )
+            entries = soup.find_all( class_ = search_text )
 
     else:
         entries = soup.find_all( search )
 
     if len(entries) == 0:
         print(f'no entries found. {entries}')
-
+        return
+        
     content = []
 
     for entry in entries:
