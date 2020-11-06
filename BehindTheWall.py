@@ -7,11 +7,19 @@ from bs4 import BeautifulSoup
 def error_log(s):
     print(s, file=sys.stderr)
 
+def parse_bool(x: str):
+    x = x.lower()
+    if x == 'true':
+        return True
+    elif x == 'false':
+        return False
+    raise ValueError(f'not a bool: {x}')
+
 def main(argv):
 
     if len(argv) > 4:
         try:
-            URL, search, search_text, class_, id_ = argv[1].strip(), argv[2].strip(), argv[3].strip(), argv[4].strip() == True, argv[5].strip() == True
+            URL, search, class_, id_ = argv[1], argv[2], parse_bool(argv[3]), parse_bool(argv[4])
 
         except ValueError:
             print( 'issues parsing command line inputs.\n' )
@@ -23,25 +31,25 @@ def main(argv):
         except ValueError:
             print( 'issues parsing command line inputs.\n' )
 
-        class_, id_, search_text = False, False, search
+        class_, id_ = False, False
     else: 
         print(f'\n\nThe following arguments were provided:\n {argv}')
         print('''please provide one of the following combinations of arguments:
         short search: {URL} {html tag search term - usually "body"}
-        deep search: {URL} {html tag search term - usually body or div} {search_text - item inside of first search tag term} {class_: True or False} {id: True or False}
+        deep search: {URL} {search - item inside of first search tag term} {class_: True or False} {id: True or False}
         ''')
 
         return
 
         #Troubleshooting defaults:
         '''
-        URL = 'https://www.crummy.com/software/BeautifulSoup/bs4/doc/'
-        search = 'div'
-        class_ = True
+        URL = 'https://realpython.com/python-or-operator/'
+        search = 'boolean-logic'
+        class_ = False
         id_ = True
-        search_text = 'installing-beautiful-soup'''
+        '''
 
-    print(f'URL: {URL}\nsearch: {search}\nclass_: {class_}\nid_:{id_}\nsearch_text:{search_text}')
+    print(f'URL: {URL}\nsearch: {search}\nclass_: {class_}\nid_:{id_}')
 
 
     #Let's do a little web scraping. returns a urllib3.response.HTTPResponse object.
@@ -58,10 +66,10 @@ def main(argv):
     if class_ or id_ :
 
         if id_:
-            entries = soup.find_all( id = search_text )
+            entries = soup.find_all( id = search )
 
         else:
-            entries = soup.find_all( class_ = search_text )
+            entries = soup.find_all( class_ = search )
 
     else:
         entries = soup.find_all( search )
