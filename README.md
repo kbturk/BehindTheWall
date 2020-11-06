@@ -7,8 +7,10 @@ This will output to a file called website.txt.
 
 
 Main commands: 
+    
     short search: {URL} {html tag search term - usually "body"}
-    deep search: {URL} {html tag search term - usually div} {search text - html tag search term} {class_: True or False} {_id: True or False}
+    
+    deep search: {URL} {html tag search term - usually a class or id name} {class_: True or False} {_id: True or False}
 
     deep search example: 
     if _id is True:
