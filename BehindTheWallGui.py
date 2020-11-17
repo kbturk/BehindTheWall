@@ -22,7 +22,7 @@ SOFTWARE.
 '''
 #written by kbturk @ 11/17/2020
 
-import requests, sys, argparse, tkinter as tk, os
+import requests, sys, tkinter as tk, os
 from bs4 import BeautifulSoup
 
 back_ground = "#fae28c"
