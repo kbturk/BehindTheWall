@@ -2,3 +2,5 @@ BehindTheWall.spec
 __pycache__/
 build/
 dist/
+tkplay.py
+website.txt
