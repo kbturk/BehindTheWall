@@ -75,15 +75,18 @@ class Application(tk.Frame):
 
         self.bottom_message = tk.StringVar()
         self.bottom_message.set("Welcome")
-        self.message = tk.Label(self, textvariable = self.bottom_message, bg = back_ground ).grid(column = 2, row = 5, columnspan=3, sticky = (tk.E, tk.W ) )
+        self.message = tk.Label(self, textvariable = self.bottom_message, bg = back_ground ).grid(column = 2, row = 5, columnspan=4, sticky = (tk.E, tk.W ) )
 
         for child in self.winfo_children(): 
             child.grid_configure( padx = 5, pady = 5 )
             
     def run_program(self):
         try:
-            scraper(self.URL.get(), self.search_obj.get(), self.select.get())
-            self.bottom_message.set("site scraping is complete. To view results, please open website.txt.")
+            result = scraper(self.URL.get(), self.search_obj.get(), self.select.get())
+            if result:
+                self.bottom_message.set("site scraping is complete. To view results, please open website.txt.")
+            else:
+                self.bottom_message.set("No results found on website. Please try again. If this error continues, try 'body' in search for full dump.")
 
         except ValueError:
             self.bottom_message.set("Hmm, something went wrong. Check that URL & Search term was supplied.")
@@ -123,24 +126,34 @@ def scraper(URL, search, select):
 
     if len(entries) == 0:
         print(f'no entries found. {entries}')
-        return
+        return False
         
     content = []
 
     for entry in entries:
+        i = 0
         try:
-            content.append(entry.get_text('\n', strip=True))
+            for text in entry.stripped_strings:
+                if i % 15 == 0:
+                    content.append("\n\n")
+                content.append(f" {text}")
+                #content.append(entry.get_text('|', strip=False))
+                i = i + 1
+
         except ValueError:
             print('issues scraping text.')
             print( entry, file=sys.stderr )
+            return False
 
-    content = '\n'.join(content)
-    
+    content = ''.join(content)
+
     with open('website.txt', 'w', encoding = 'utf8') as f:
         f.write(content)
 
     print('''site scraping is complete. To view results, please open website.txt
     I recommend using the following command from the command line: fold -s website.txt to view in terminal.''')
+
+    return True
 
 def main(argv):
     #tinkter built window:
