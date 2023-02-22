@@ -1,4 +1,4 @@
-# Behind the Wall
+# 🧱 Behind the Wall 🧱
 
 Behind the wall is a simple website scraper using requests and beautiful soup that pulls text from a website using the command line.
 
