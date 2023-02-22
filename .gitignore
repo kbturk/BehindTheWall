@@ -3,5 +3,6 @@ __pycache__/
 build/
 dist/
 tkplay.py
-website.txt
+*.txt
 GUI/
+.gitignore
