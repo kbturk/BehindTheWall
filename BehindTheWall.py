@@ -43,8 +43,6 @@ def scraper(args) -> bool:
         print(f'no entries found. {entries}')
         return False
 
-    print(entries)
-
     content = []
 
     for entry in entries:
