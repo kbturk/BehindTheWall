@@ -1,7 +1,7 @@
 import requests, sys, argparse
 from bs4 import BeautifulSoup
 
-def error_log(s):
+def error_log(s) -> None:
     print(s, file=sys.stderr)
 
 def arg_parser():
@@ -14,6 +14,15 @@ def arg_parser():
     g.add_argument('-i', '--id', dest= 'id', help='search for text where tag_string matches HTML id name',
       action='store_true')
     return parser
+
+def pretty_format(text: str, par_length = 5) -> str:
+    s_list = text.split('.')
+    for i, s in enumerate(s_list):
+        s_list[i] = f"{s}."
+        if i% 5 == 0:
+            s_list[i] = s_list[i] + "\n\n"
+
+    return "".join(s_list)
 
 def scraper(args) -> bool:
     '''
@@ -46,20 +55,16 @@ def scraper(args) -> bool:
     content = []
 
     for entry in entries:
-        i = 0
         try:
             for text in entry.stripped_strings:
-                if i % 5 == 0:
-                    content.append('\n\n')
-                content.append(text+" ")
-                i += 1
+                content.append(" "+text)
 
         except ValueError:
             print('issues scraping text.')
             error_log(entry)
             return False
     
-    content_string = ''.join(content)
+    content_string = pretty_format(''.join(content))
 
     with open('website.txt', 'w', encoding = 'utf8') as f:
         f.write(content_string)
@@ -69,10 +74,9 @@ def scraper(args) -> bool:
 
     return True
 
-def main(argv):
-    args = arg_parser().parse_args(argv[1:])
-
-    scraper(args)
+def main(argv) -> int:
+    scraper(arg_parser().parse_args(argv[1:]))
+    return 0
 
 if __name__ == '__main__':
     sys.exit(main(sys.argv))
