@@ -6,8 +6,8 @@ def error_log(s) -> None:
 
 def arg_parser():
     parser = argparse.ArgumentParser()
-    parser.add_argument('url', help='URL to fetch', type=str)
     parser.add_argument('tag_string', help='html tag string', type=str)
+    parser.add_argument('url', help='URL to fetch', type=str)
     g = parser.add_mutually_exclusive_group()
     g.add_argument('-c', '--class', dest='class_',
       help='search for text where tag_string matches HTML class name', action='store_true')

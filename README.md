@@ -1,17 +1,24 @@
-Behind the Wall
+# Behind the Wall
 
 Behind the wall is a simple website scraper using requests and beautiful soup that pulls text from a website using the command line.
 
-This will output to a file called website.txt. 
-    Use this command to easily read this from the command line:  fold -s website.txt 
+This will output to a file called website.txt.
 
-
-Main commands: 
+## Main commands: 
     
-    short search: {URL} {html tag search term - usually "body"}
+    short search: {html tag search term - usually "body"} {URL} 
     
-    deep search: {URL} {html tag search term - usually a class or id name} {class_: True or False} {_id: True or False}
+    class or id search: {-c | --class | -i | --id } {html tag search term - usually a class or id name} {URL} 
 
-    deep search example: 
-    if _id is True:
-            entries = soup.find_all( id = search_text )
+## Examples:
+   ```
+   >python BehindTheWall.py -c references https://en.wikipedia.org/wiki/Platform_game
+   ```
+   ```
+   >python BehindTheWall.py body https://en.wikipedia.org/wiki/Platform_game
+   ```
+### Success:
+   ```
+   site scraping is complete. To view results, please open website.txt or
+    you can view in the terminal using something like: `fold -s website.txt`
+    ```
