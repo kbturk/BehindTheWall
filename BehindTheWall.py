@@ -1,10 +1,11 @@
 import requests, sys, argparse
 from bs4 import BeautifulSoup
 
-def error_log(s) -> None:
-    print(s, file=sys.stderr)
+def error_log(s: str) -> bool:
+    print(f'\033[31;1m{s}\033[0m', file=sys.stderr)
+    return False
 
-def arg_parser():
+def arg_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser()
     parser.add_argument('tag_string', help='html tag string', type=str)
     parser.add_argument('url', help='URL to fetch', type=str)
@@ -15,7 +16,12 @@ def arg_parser():
       action='store_true')
     return parser
 
-def pretty_format(text: str, par_length = 5) -> str:
+def pretty_format(text: str, par_length:int = 5) -> str:
+    '''
+    create pretty output format by splitting the text into paragraphs based on periods.
+    par_length is an optional paramater.
+    '''
+
     s_list = text.split('.')
     for i, s in enumerate(s_list):
         s_list[i] = f"{s}."
@@ -26,16 +32,21 @@ def pretty_format(text: str, par_length = 5) -> str:
 
 def scraper(args) -> bool:
     '''
-    uses requests to stream html from a website URL which is then parsed using
-    beautifulSoup
+    use requests to stream html from a website URL which is then parsed using
+    beautifulSoup's find_all function.
+
+    requests is a popular 3rd party open source python library
+    see https://github.com/psf/requests.git for more info
+
+    beautifulSoup4 is a popular 3rd party os python library that parses
+    html code.
     '''
 
-    # returns a urllib3.response.HTTPResponse object.
-    r = requests.get(args.url, stream=True)
+    r: requests.models.Response = requests.get(args.url, stream=True)
     r.encoding = 'utf-8'
 
     if len(r.text) == 0:
-        print('had issue with requests.get scraper.')
+        return error_log('had issue with requests.get scraper.')
 
     #Translate to beautiful soup.
     soup = BeautifulSoup(r.text, 'html.parser')
@@ -49,8 +60,7 @@ def scraper(args) -> bool:
         entries = soup.find_all( args.tag_string )
 
     if len(entries) == 0:
-        print(f'no entries found. {entries}')
-        return False
+        return error_log(f'no entries found when searching for: {args.tag_string}')
 
     content = []
 
@@ -60,21 +70,19 @@ def scraper(args) -> bool:
                 content.append(" "+text)
 
         except ValueError:
-            print('issues scraping text.')
-            error_log(entry)
-            return False
+            return error_log(f'issues scraping text: {entry}')
     
     content_string = pretty_format(''.join(content))
 
     with open('website.txt', 'w', encoding = 'utf8') as f:
         f.write(content_string)
 
-    print('''site scraping is complete. To view results, please open website.txt or 
-    you can view in the terminal using something like: `fold -s website.txt`''')
+    print('''\033[32;1msite scraping is complete. To view results, please open website.txt or 
+    you can view in the terminal using something like: `fold -s website.txt`\033[0m''')
 
     return True
 
-def main(argv) -> int:
+def main(argv: list[str]) -> int:
     scraper(arg_parser().parse_args(argv[1:]))
     return 0
 
